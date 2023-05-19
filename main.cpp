@@ -195,7 +195,7 @@ int main(int argc, char **argv){
 					}
 					
 					unsigned int v1 = KTNSPar(sol);
-					unsigned int v2 = KTNS(sol);
+					unsigned int v2 = KTNS_MECLER(sol);
 		
 					if(v1 == v2){
 						++certo;
