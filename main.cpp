@@ -87,23 +87,6 @@ unsigned int toFullMag(vector<int> s);
 	vector<vector<int>> MD;/// auxiliary of GPCA PAR
 	int pipes_countD = 0;/// auxiliary of GPCA PAR
 
-
-
-	
-	/********************** auxiliary of min-max flow **************************/
-	
-	//~ struct Node{
-		//~ unsigned int stage,tool;
-		//~ vector<*Node> edges;
-		//~ vector<int> w;
-		//~ vector<bool> c;		
-	//~ };
-	
-	//~ struct Edge{
-		//~ int to, from, w, c;
-	//~ };
-	
-	/******************** auxiliary of min-max flow FIM *************************/
 	
 /**************************************** Variaveis Globais FIM ****************************************/
 
@@ -119,11 +102,9 @@ int main(int argc, char **argv){
 	string fn = argv[1];
 	int KTNS_Type = atoi(argv[2]);
 	
-	if(argc == 4){
 		// Abre o arquivo com a instância
-		fnPermu.open(argv[3]);
-		if(!fnPermu.is_open()) cout<<"Could not open the file! \n";
-	}
+	fnPermu.open(argv[3]);
+	if(!fnPermu.is_open()) cout<<"Could not open the permutation file! \n";
 		
 	// Load instance	
 	loadInstance(fn);
@@ -146,13 +127,18 @@ int main(int argc, char **argv){
 
 	// Primeira solucao
 	vector<int> sol(numberJobs);
-	for (unsigned i = 0; i < numberJobs; i++) sol[i] = i;
 		
 	
 	//2000000
 	for(unsigned i = 0; i < 2000000; i++){
 		
-		
+		getline(fnPermu,lineSol);
+		stringstream ss(lineSol);
+		for(int c = 0; c < numberJobs; ++c){
+			getline(ss ,lineSol, ' ');
+			sol[c] = stoi(lineSol);
+		}
+
 		// Qual KTNS rodar
 		switch (KTNS_Type){
 			case 1 : 				
@@ -186,14 +172,7 @@ int main(int argc, char **argv){
 				next_permutation(sol.begin(),sol.end());
 				break;
 			case 10 :
-				{
-					getline(fnPermu,lineSol);
-					stringstream ss(lineSol);
-					for(int c = 0; c < numberJobs; ++c){
-						getline(ss ,lineSol, ' ');
-						sol[c] = stoi(lineSol);
-					}
-					
+				{					
 					unsigned int v1 = KTNSPar(sol);
 					unsigned int v2 = KTNS_MECLER(sol);
 		
@@ -207,8 +186,10 @@ int main(int argc, char **argv){
 
 	}
 	
-	if(argc == 4){
-		fnPermu.close();
+	//close file
+	fnPermu.close();
+
+	if(argc == 10){
 		cout <<fn<<" "<<((float)certo/(float)2000000)<<" "<<certo<<"\n";
 	}
 	
