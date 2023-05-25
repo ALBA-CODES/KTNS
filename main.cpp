@@ -101,11 +101,7 @@ int main(int argc, char **argv){
 	// Load config
 	string fn = argv[1];
 	int KTNS_Type = atoi(argv[2]);
-	
-		// Abre o arquivo com a instância
-	fnPermu.open(argv[3]);
-	if(!fnPermu.is_open()) cout<<"Could not open the permutation file! \n";
-		
+			
 	// Load instance	
 	loadInstance(fn);
 	
@@ -122,59 +118,55 @@ int main(int argc, char **argv){
 	if(KTNS_Type == 6) tKT = thread(threadRunGPCA);
 
 	
-	// Comeca a contar o tempo
-	ExecTime et(fn);
-
-	// Primeira solucao
-	vector<int> sol(numberJobs);
-		
+	// Abre o arquivo com a instância
+	fnPermu.open(argv[3]);
+	if(!fnPermu.is_open()) cout<<"Could not open the permutation file! \n";
+	// permutacoes
+	vector<vector<int>> sol(2000000, vector<int>(numberJobs,0));
 	
-	//2000000
 	for(unsigned i = 0; i < 2000000; i++){
-		
 		getline(fnPermu,lineSol);
 		stringstream ss(lineSol);
 		for(int c = 0; c < numberJobs; ++c){
 			getline(ss ,lineSol, ' ');
-			sol[c] = stoi(lineSol);
+			sol[i][c] = stoi(lineSol);
 		}
+	}
+
+	//close file
+	fnPermu.close();
+
+	// Comeca a contar o tempo
+	ExecTime et(fn);
+		
+	
+	//2000000
+	for(unsigned i = 0; i < 2000000; i++){
 
 		// Qual KTNS rodar
 		switch (KTNS_Type){
 			case 1 : 				
-				KTNS(sol);
-				// Gerar uma nova solucao		
-				next_permutation(sol.begin(),sol.end());
+				KTNS(sol[i]);
 			break;
 			case 2 : 
-				KTNS_MECLER(sol);
-				// Gerar uma nova solucao		
-				next_permutation(sol.begin(),sol.end());
+				KTNS_MECLER(sol[i]);
 			break;
 			case 3 : 
-				GPCA(sol);
-				// Gerar uma nova solucao		
-				next_permutation(sol.begin(),sol.end());
+				GPCA(sol[i]);
 				break;
 			case 4 : 
-				toFullMag(sol);
-				// Gerar uma nova solucao		
-				next_permutation(sol.begin(),sol.end());				
+				toFullMag(sol[i]);
 				break;
 			case 5 : 
-				KTNSPar(sol);
-				// Gerar uma nova solucao		
-				next_permutation(sol.begin(),sol.end());
+				KTNSPar(sol[i]);
 				break;
 			case 6 : 
-				GPCAPar(sol);
-				// Gerar uma nova solucao		
-				next_permutation(sol.begin(),sol.end());
+				GPCAPar(sol[i]);
 				break;
 			case 10 :
 				{					
-					unsigned int v1 = KTNSPar(sol);
-					unsigned int v2 = KTNS_MECLER(sol);
+					unsigned int v1 = KTNSPar(sol[i]);
+					unsigned int v2 = KTNS_MECLER(sol[i]);
 		
 					if(v1 == v2){
 						++certo;
@@ -186,10 +178,7 @@ int main(int argc, char **argv){
 
 	}
 	
-	//close file
-	fnPermu.close();
-
-	if(argc == 10){
+	if(KTNS_Type == 10){
 		cout <<fn<<" "<<((float)certo/(float)2000000)<<" "<<certo<<"\n";
 	}
 	
